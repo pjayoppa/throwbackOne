@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Throwback.Models;
+using Throwback.ViewModels;
 namespace Throwback.Controllers
 {
     public class MoviesController : Controller
@@ -11,13 +12,28 @@ namespace Throwback.Controllers
         // GET: Movies/Random
         public ActionResult Random()
         {
-             
+
             var movie = new Movie()
             {
                 Name = "Shrek!"
             };
-            //return View(movie);
-            return RedirectToAction("Index", "Home", new { page = 1, sortBy = "name" });
+
+            var customers = new List<Customer>
+            {
+                //'Name' is from models
+                new Customer { Name = "Customer 1"},
+                new Customer { Name = "Customer 2"}
+            };
+
+            var viewModel = new RandomMovieViewModel
+            {
+                Movie = movie,
+                Customers = customers
+            };
+
+
+            return View(viewModel);
+            //return RedirectToAction("Index", "Home", new { page = 1, sortBy = "name" });
         }
 
         public ActionResult Edit(int movieid)
@@ -36,10 +52,13 @@ namespace Throwback.Controllers
             return Content(String.Format("pageIndex={0}&sortBy={1}", pagendx, sortBy));
         }
 
-        public ActionResult ByReleaseDate(int year, int month)
+        [Route("movies/released/{year}/{month:regex(\\d{4}):range(1, 12)}")]
+        public ActionResult ByReleaseYear(int year, int month)
         {
             return Content(year + "/" + month);
         }
+
+
              
     }
 }
